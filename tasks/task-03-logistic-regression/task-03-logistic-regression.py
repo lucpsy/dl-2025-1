@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.datasets import make_blobs
 
+
 class LogisticNeuron:
     def __init__(self, input_dim, learning_rate=0.1, epochs=1000):
         self.weights = np.random.randn(input_dim)
@@ -9,19 +10,22 @@ class LogisticNeuron:
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.loss_history = []
-    
     def sigmoid(self, z):
 
         ### START CODE HERE ###
         ### TODO
-        s = None
+        s = 1 / (1 + np.exp(-z))
         ### END CODE HERE ###
         return s
     
     def predict_proba(self, X):
         ### START CODE HERE ###
         ### TODO
-        a = None
+        pesos = self.weights
+        bias = self.bias
+        soma = X@pesos
+        z = soma+bias
+        a = self.sigmoid(z)
         ### END CODE HERE ###
         return a
     
@@ -33,21 +37,20 @@ class LogisticNeuron:
         for _ in range(self.epochs):
             ### START CODE HERE ###
             ### TODO: Implement forward pass
-            y_pred = None
-
+            y_p = self.predict_proba(X)
             ### TODO: Compute error
-            error = None
-
+            erros = y_p-y
             ### TODO: Compute gradients
-            grad_w = None
-            grad_b = None
+            m = X.shape[0]
+            grad = (1/m)*(X.T@erros)
+            grad_b =  (1/m)*sum(erros)
 
             ### TODO: Update weights and bias
-            self.weights = None
-            self.bias = None
+            self.weights -= self.learning_rate*grad
+            self.bias -= self.learning_rate*grad_b
 
             ### TODO: Compute loss and append to loss_history
-            loss = None
+            loss = (-1/m) * np.sum(y * np.log(y_p+1e-15) + (1 - y) * np.log(1 - y_p+1e-15))
             self.loss_history.append(loss)
             ### END CODE HERE ###
 
