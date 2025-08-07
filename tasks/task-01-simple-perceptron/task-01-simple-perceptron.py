@@ -4,7 +4,7 @@ from sklearn.datasets import make_blobs
 from sklearn.model_selection import train_test_split
 
 class Perceptron:
-    def __init__(self, seed=0, input_size=2, learning_rate=0.01, epochs=100):
+    def __init__(self, seed = 0, input_size=2, learning_rate=0.01, epochs=100):
         self.seed = seed
         self.learning_rate = learning_rate
         self.epochs = epochs
@@ -14,26 +14,32 @@ class Perceptron:
     def _init_weights(self):
         rng = np.random.default_rng(self.seed)
         ### START CODE HERE ###
-        ### TODO: Initialize weights with small Gaussian noise using rng.normal
-
+        self.weights = rng.normal(size = self.input_size + 1)
         ### END CODE HERE ###
 
     def activation(self, x):
         ### START CODE HERE ###
-        ### TODO: Implement the step activation function
-        pass
+        return np.where(x >= 0, 1, -1)
         ### END CODE HERE ###
 
     def predict(self, X):
         ### START CODE HERE ###
-        ### TODO: Add a bias term to X, compute dot product with weights, and apply activation
-        pass
+        b = np.ones((X.shape[0], 1))
+        X_b = np.hstack([b, X])
+        linear_output = X_b @ self.weights
+        return self.activation(linear_output)        
         ### END CODE HERE ###
 
     def fit(self, X, y):
         ### START CODE HERE ###
-        ### TODO: Implement the perceptron learning rule using weight updates
-        pass
+        b = np.ones((X.shape[0], 1))
+        X_b = np.hstack([b, X])
+        for epoch in range(self.epochs):
+            funcao_linear = X_b @ self.weights
+            previsoes = self.activation(funcao_linear)
+            erros = y - previsoes
+            mudanca = self.learning_rate * (X_b.T @ erros)
+            self.weights += mudanca
         ### END CODE HERE ###
 
 def generate_data(seed=0, samples=200, noise=1.5):
@@ -112,4 +118,3 @@ def main():
 if __name__ == "__main__":
 
     main()
-
